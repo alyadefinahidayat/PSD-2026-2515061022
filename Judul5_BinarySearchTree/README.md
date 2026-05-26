@@ -1,4 +1,4 @@
-<img width="295" height="229" alt="3c4fca38-4490-47b3-9229-c734af318fa6" src="https://github.com/user-attachments/assets/70421715-dc83-480d-84e7-8d5c3a45a0b6" /># Sistem Pencarian Data pada Perpustakaan 
+# Sistem Pencarian Data pada Perpustakaan 
 
 ## Deskripsi Singkat
 Program ini merupakan implementasi sederhana dari metode Binary Search Tree (BST) dengan bahasa Python. Program dapat digunakan untuk menambah, mencari, menampilkan daftar buku, mencari buku pertama dan terakhir berdasarkan alfabet, serta menghitung jumlah buku.
