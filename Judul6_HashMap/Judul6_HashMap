@@ -1,0 +1,130 @@
+class SlotState:
+    EMPTY = 0
+    OCCUPIED = 1
+    DELETED = 2
+
+
+class Entry:
+    def __init__(self):
+        self.plat = None
+        self.pemilik = None
+        self.state = SlotState.EMPTY
+
+
+class SistemParkir:
+    def __init__(self, size=10):
+        self.SIZE = size
+        self.table = [Entry() for _ in range(self.SIZE)]
+
+    def hash_function(self, plat):
+        return sum(ord(c) for c in plat) % self.SIZE
+
+    def parkir(self, plat, pemilik):
+        idx = self.hash_function(plat)
+        first_deleted = -1
+
+        for step in range(self.SIZE):
+            i = (idx + step) % self.SIZE
+
+            if self.table[i].state == SlotState.OCCUPIED:
+                if self.table[i].plat == plat:
+                    print(f"Kendaraan {plat} sudah terdaftar.")
+                    return True
+
+            elif self.table[i].state == SlotState.DELETED:
+                if first_deleted == -1:
+                    first_deleted = i
+
+            else:
+                if first_deleted != -1:
+                    i = first_deleted
+
+                self.table[i].plat = plat
+                self.table[i].pemilik = pemilik
+                self.table[i].state = SlotState.OCCUPIED
+
+                print(f"Kendaraan {plat} berhasil parkir di slot {i}.")
+                return True
+
+        if first_deleted != -1:
+            self.table[first_deleted].plat = plat
+            self.table[first_deleted].pemilik = pemilik
+            self.table[first_deleted].state = SlotState.OCCUPIED
+
+            print(f"Kendaraan {plat} berhasil parkir di slot {first_deleted}.")
+            return True
+
+        print("Parkiran penuh!")
+        return False
+
+    def cari_kendaraan(self, plat):
+        idx = self.hash_function(plat)
+
+        for step in range(self.SIZE):
+            i = (idx + step) % self.SIZE
+
+            if self.table[i].state == SlotState.EMPTY:
+                return None
+
+            if (self.table[i].state == SlotState.OCCUPIED and
+                    self.table[i].plat == plat):
+                return self.table[i]
+
+        return None
+
+    def keluar(self, plat):
+        kendaraan = self.cari_kendaraan(plat)
+
+        if kendaraan is None:
+            print(f"Kendaraan {plat} tidak ditemukan.")
+            return False
+
+        kendaraan.state = SlotState.DELETED
+        print(f"Kendaraan {plat} telah keluar dari parkiran.")
+        return True
+
+    def tampilkan_parkir(self):
+        print("\n=== DATA PARKIR ===")
+        for i in range(self.SIZE):
+            print(f"Slot {i}: ", end="")
+
+            if self.table[i].state == SlotState.EMPTY:
+                print("KOSONG")
+
+            elif self.table[i].state == SlotState.DELETED:
+                print("KELUAR")
+
+            else:
+                print(f"Plat: {self.table[i].plat}, "
+                      f"Pemilik: {self.table[i].pemilik}")
+
+
+def main():
+    parkir = SistemParkir(10)
+
+    # Data awal
+    parkir.parkir("BE1234AA", "Andi")
+    parkir.parkir("BE5678BB", "Budi")
+    parkir.parkir("BE9999CC", "Citra")
+
+    parkir.tampilkan_parkir()
+
+    # Pencarian kendaraan
+    hasil = parkir.cari_kendaraan("BE5678BB")
+
+    if hasil is not None:
+        print(f"\nKendaraan ditemukan")
+        print(f"Plat     : {hasil.plat}")
+        print(f"Pemilik  : {hasil.pemilik}")
+    else:
+        print("\nKendaraan tidak ditemukan")
+
+    # Kendaraan keluar
+    parkir.keluar("BE5678BB")
+
+    print("\nSetelah kendaraan keluar:")
+    parkir.tampilkan_parkir()
+
+
+if __name__ == "__main__":
+    main()
